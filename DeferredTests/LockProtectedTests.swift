@@ -29,7 +29,7 @@ class LockProtectedTests: XCTestCase {
         var lastWriterDate: NSDate?
 
         let startReader: (Int) -> () = { i in
-            let expectation = self.expectationWithDescription("reader \(i)")
+            let expectation = self.expectation("reader \(i)")
             dispatch_async(self.queue) {
                 self.protected.withReadLock { (date,items) -> () in
                     if items.count == 0 && date == nil {
@@ -47,7 +47,7 @@ class LockProtectedTests: XCTestCase {
         for i in 0 ..< 64 {
             startReader(i)
         }
-        let expectation = self.expectationWithDescription("writer")
+        let expectation = self.expectation("writer")
         dispatch_async(self.queue) {
             self.protected.withWriteLock { dateItemsTuple -> () in
                 for i in 0 ..< 5 {

@@ -8,17 +8,15 @@
 
 import Foundation
 
-// TODO: Replace this with a class var
-private var DeferredDefaultQueue = DispatchQueue.global(qos: DispatchQoS.default.qosClass)
-
 open class Deferred<T> {
+    
     typealias UponBlock = (DispatchQueue, (T) -> ())
     fileprivate typealias Protected = (protectedValue: T?, uponBlocks: [UponBlock])
 
     fileprivate var protected: LockProtected<Protected>
     fileprivate let defaultQueue: DispatchQueue
 
-    public init(value: T? = nil, defaultQueue: DispatchQueue = DeferredDefaultQueue) {
+    public init(value: T? = nil, defaultQueue: DispatchQueue = DispatchQueue.global(qos: .default)) {
         protected = LockProtected(item: (value, []))
         self.defaultQueue = defaultQueue
     }

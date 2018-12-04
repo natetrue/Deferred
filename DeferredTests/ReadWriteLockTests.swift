@@ -9,8 +9,8 @@
 import XCTest
 import Deferred
 
-func timeIntervalSleep(duration: NSTimeInterval) {
-    usleep(useconds_t(duration * NSTimeInterval(USEC_PER_SEC)))
+func timeIntervalSleep(duration: TimeInterval) {
+    usleep(useconds_t(duration * TimeInterval(USEC_PER_SEC)))
 }
 
 class PerfTestThread: NSThread {
@@ -70,7 +70,7 @@ class ReadWriteLockTests: XCTestCase {
         for (var lock) in locks {
             // start up 32 readers that block for 0.1 seconds each...
             for i in 0 ..< 32 {
-                let expectation = expectationWithDescription("read \(lock)")
+                let expectation = expectation("read \(lock)")
                 dispatch_async(queue) {
                     lock.withReadLock {
                         timeIntervalSleep(0.1)
@@ -93,7 +93,7 @@ class ReadWriteLockTests: XCTestCase {
 
             // spin up 5 writers concurrently...
             for i in 0 ..< 5 {
-                let expectation = expectationWithDescription("write \(lock) #\(i)")
+                let expectation = expectation("write \(lock) #\(i)")
                 dispatch_async(queue) {
                     lock.withWriteLock {
                         // ... and make sure each runs in order by checking that
@@ -117,7 +117,7 @@ class ReadWriteLockTests: XCTestCase {
             var x: Int32 = 0
 
             let startReader: (Int) -> () = { i in
-                let expectation = self.expectationWithDescription("reader \(i)")
+                let expectation = self.expectation("reader \(i)")
                 dispatch_async(self.queue) {
                     lock.withReadLock {
                         // make sure we get the value of x either before or after
@@ -133,7 +133,7 @@ class ReadWriteLockTests: XCTestCase {
                 startReader(i)
             }
             // spin up a writer that (slowly) increments x from 0 to 5
-            let expectation = expectationWithDescription("writer")
+            let expectation = expectation("writer")
             dispatch_async(queue) {
                 lock.withWriteLock {
                     for i in 0 ..< 5 {
